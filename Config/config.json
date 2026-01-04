@@ -1,0 +1,8 @@
+{
+    "env": "local",
+    "port": 9090,
+    "db": {
+        "username": "someUser",
+        "password": "somePass"
+    }
+}
