@@ -1,32 +1,27 @@
 #pragma once
 
-#include "Storage/Storage.h"
 #include <vector>
+#include <string>
+#include "Storage/Storage.h"
 
 class Logger;
 
 class AuthService{
 private:
-    // TODO: Connect DataBase;
-    Storage m_storage{};
+    // TODO: Should read from cfg file;
+    Storage m_storage{"dbname = postgres user = postgres password = 1234 \
+             hostaddr = 127.0.0.1 port = 5432"};
 
     // TODO: Logger
     Logger* m_logger{};
-    // TODO: for future its needs to be a json format
-    // Imagine client sends json file from website form
     std::vector<std::string> m_currentLine{};
 
 public:
-    // TODO: Constuctor
+    // TODO: Constuctor with cfg reader
     AuthService(Logger* logger) 
         : m_logger(logger) {}
-    
-        // TODO: Destructor
     ~AuthService() {}
 
-    // Run the app
     void run();
-    
-    // TODO: Graceful shotdown
-    
+    bool parser(const std::string& input);
 };
