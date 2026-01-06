@@ -11,7 +11,8 @@ void AuthService::run() {
     if (!input.empty()) {
         if (parser(input)) {
             // First param is email and the second is the pass
-            m_storage.addUser(m_currentLine[0], m_currentLine[1]);
+            // m_storage.addUser(m_currentLine[0], m_currentLine[1]);
+            m_storage.verifyUser(m_currentLine[0], m_currentLine[1]);
         } else {
             std::cout << "Email or Password is Incorrect Try again!" << '\n';
         }
@@ -38,7 +39,7 @@ bool AuthService::parser(const std::string& input) {
         return false;
     }
 
-    if (m_currentLine[0].contains('@') && m_currentLine.size() == 2) {
+    if (m_currentLine[0].contains('@') && m_currentLine[0].contains('.') && m_currentLine.size() == 2) {
         return true;
     }
 

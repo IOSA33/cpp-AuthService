@@ -18,6 +18,7 @@ public:
     void init();
     void selectUser(const std::string& email);
     void addUser(const std::string& email, const std::string& pass);
+    void verifyUser(const std::string& email, const std::string& pass);
     void deleteUser(const std::string& email);
     void blackListUser(const std::string& email);
 };
