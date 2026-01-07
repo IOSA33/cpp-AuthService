@@ -9,6 +9,7 @@ void AuthService::run() {
         std::cout << "1) REG [EMAIL] [PASSWORD]" << '\n';
         std::cout << "2) LOG [EMAIL] [PASSWORD]" << '\n';
         
+        m_currentLine.clear();
         std::string input{};
         std::getline(std::cin >> std::ws, input);
 
@@ -19,19 +20,33 @@ void AuthService::run() {
                 if (m_currentLine[0] == "REG") {
                     if (m_storage.addUser(m_currentLine[1], m_currentLine[2])) {
                         std::cout << "Congrats! User registered!\n";
-                        // TODO: return session ID
+                        std::string curr_session { m_storage.createSessionID() };
+                        if (curr_session.empty()) {
+                            std::cout << "Something went wrong!\n";
+                            continue;
+                        }
+
+                        std::cout << curr_session << std::endl;
 
                     } else {
                         continue;
                     }
+
                 } else if (m_currentLine[0] == "LOG") {
                     if (m_storage.verifyUser(m_currentLine[1], m_currentLine[2])) {
                         std::cout << "Congrats! User logged in!\n";
-                        // TODO: return session ID
-                        
+                        std::string curr_session { m_storage.createSessionID() };
+                        if (curr_session.empty()) {
+                            std::cout << "Something went wrong!\n";
+                            continue;
+                        }
+
+                        std::cout << curr_session << std::endl;
+
                     } else {
                         continue;
                     }
+
                 } else {
                     std::cout << "Unknown Command try again!" << '\n';
                     continue;
@@ -40,6 +55,7 @@ void AuthService::run() {
             } else {
                 std::cout << "Input is Incorrect. Try again!" << '\n';
             }
+            
         } else {
             std::cout << "Input is empty!" << '\n';
         }

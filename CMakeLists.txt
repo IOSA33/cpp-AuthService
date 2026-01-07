@@ -11,7 +11,8 @@ find_package(libpqxx REQUIRED)
 add_executable(app main.cpp
                    src/AuthService.cpp
                    src/Storage/Storage.cpp
-                   src/lib/RandomString.cpp)
+                   src/lib/RandomString.cpp
+                   src/Storage/SessionID/SessionID.cpp)
 
 target_link_libraries(app PRIVATE libpqxx::pqxx)
 target_link_libraries(app PRIVATE sodium)

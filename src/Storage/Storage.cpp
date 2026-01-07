@@ -2,6 +2,7 @@
 #include <pqxx/pqxx>
 #include <iostream>
 #include <string>
+#include <cstring>
 #include <sodium.h>
 
 void Storage::connect() {
@@ -52,7 +53,7 @@ void Storage::init() {
     }
 }
 
-bool Storage::selectUser(const std::string& email) {
+bool Storage::getUserInfo(const std::string& email) {
     const std::string op { "Storage::selectUser" };
     m_sql.clear();
 
@@ -92,9 +93,50 @@ bool Storage::selectUser(const std::string& email) {
     return false;
 }
 
+bool Storage::checkEmail(const std::string& email) {
+    const std::string op { "Storage::checkEmail" }; 
+    m_sql.clear();
+
+    if (m_sql.empty()) {
+        m_sql = "SELECT EXISTS(SELECT 1 FROM users WHERE email = ($1)) ";
+    } else {
+        std::cerr << op << ", sql string is no empty!" << '\n';
+        return false;
+    }
+
+    // If true email exists, false email does not exists in db
+    try {
+        pqxx::nontransaction N(m_C);
+        pqxx::result R( N.exec_params(m_sql.c_str(), email));
+        if (R.empty()) {
+            std::cout << "Email does not exists\n";
+            return false;
+        }
+        std::cout << "Email exists!" << '\n';
+        return true;
+
+    } catch (const pqxx::sql_error &e) {
+        std::cerr << op << ", What: " << e.what() << '\n';
+        return false;
+    } catch (const std::exception &e) {
+        std::cerr << op << ", General error: " << e.what() << '\n';
+        return false;
+    }
+
+    return false;
+}
+
+
 bool Storage::addUser(const std::string& email, const std::string& pass) {
     const std::string op { "Storage::addUser" };
     m_sql.clear();
+
+    // Because hashing is slow operation (1-2 sec) we should first check if user exists
+    // If so we early return false from this function
+    bool result { checkEmail(email) };
+    if (result) {
+        return false;
+    }
 
     if (m_sql.empty()) {
         m_sql = "INSERT INTO users (email, pass_hash) VALUES ($1, $2);"; 
@@ -152,7 +194,7 @@ bool Storage::verifyUser(const std::string& email, const std::string& pass) {
             std::cout << "Password is Incorrect! Try again!" << '\n';
             return false;
         } else {
-            std::cout << op << ", Password is correct!" << '\n';
+            std::cout << "Password is correct!" << '\n';
             return true;
         }
 
@@ -170,33 +212,17 @@ bool Storage::verifyUser(const std::string& email, const std::string& pass) {
     return false;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// TODO: delteUser
 bool Storage::deleteUser(const std::string& email) {
     const std::string op { "Storage::deleteUser" };
-
-    std::cout << "Called deleteUser test" << '\n';
+    
+    
     return false;
 }
 
-bool Storage::blackListUser(const std::string& email) {
-    const std::string op { "Storage::blackListUser" };
+bool Storage::updateUserPass(const std::string& email, const std::string& pass) {
+    const std::string op { "Storage::updateUserPass" };
 
-    std::cout << "Called blackListUser test" << '\n';
+    
     return false;
 }

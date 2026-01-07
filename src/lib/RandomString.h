@@ -9,5 +9,5 @@ struct RandomString {
                                     "0123456789"
                                     "+-.,/!%&()=[]{}@" };
 
-    void generateRandom(const int length);
+    std::string generateRandom(const int length);
 };
