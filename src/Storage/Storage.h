@@ -16,9 +16,9 @@ public:
 
     void connect();
     void init();
-    void selectUser(const std::string& email);
-    void addUser(const std::string& email, const std::string& pass);
-    void verifyUser(const std::string& email, const std::string& pass);
-    void deleteUser(const std::string& email);
-    void blackListUser(const std::string& email);
+    bool selectUser(const std::string& email);
+    bool addUser(const std::string& email, const std::string& pass);
+    bool verifyUser(const std::string& email, const std::string& pass);
+    bool deleteUser(const std::string& email);
+    bool blackListUser(const std::string& email);
 };

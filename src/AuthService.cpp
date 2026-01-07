@@ -4,17 +4,44 @@
 #include <algorithm>
 
 void AuthService::run() {
-    std::cout << "For Register enter: Email and Password!" << '\n';
-    std::string input{};
-    std::getline(std::cin >> std::ws, input);
-    
-    if (!input.empty()) {
-        if (parser(input)) {
-            // First param is email and the second is the pass
-            // m_storage.addUser(m_currentLine[0], m_currentLine[1]);
-            m_storage.verifyUser(m_currentLine[0], m_currentLine[1]);
+    while (true) {
+        std::cout << "\nCommands:" << '\n';
+        std::cout << "1) REG [EMAIL] [PASSWORD]" << '\n';
+        std::cout << "2) LOG [EMAIL] [PASSWORD]" << '\n';
+        
+        std::string input{};
+        std::getline(std::cin >> std::ws, input);
+
+        if (input == "exit") return;
+
+        if (!input.empty()) {
+            if (parser(input)) {
+                if (m_currentLine[0] == "REG") {
+                    if (m_storage.addUser(m_currentLine[1], m_currentLine[2])) {
+                        std::cout << "Congrats! User registered!\n";
+                        // TODO: return session ID
+
+                    } else {
+                        continue;
+                    }
+                } else if (m_currentLine[0] == "LOG") {
+                    if (m_storage.verifyUser(m_currentLine[1], m_currentLine[2])) {
+                        std::cout << "Congrats! User logged in!\n";
+                        // TODO: return session ID
+                        
+                    } else {
+                        continue;
+                    }
+                } else {
+                    std::cout << "Unknown Command try again!" << '\n';
+                    continue;
+                }
+
+            } else {
+                std::cout << "Input is Incorrect. Try again!" << '\n';
+            }
         } else {
-            std::cout << "Email or Password is Incorrect Try again!" << '\n';
+            std::cout << "Input is empty!" << '\n';
         }
     }
 }
@@ -34,14 +61,11 @@ bool AuthService::parser(const std::string& input) {
         m_currentLine.emplace_back(temp);
     }
 
-    // early return if user input is more than a 2 words
     if (m_currentLine.size() > 2) {
-        return false;
+        if (m_currentLine[1].contains('@') && m_currentLine[1].contains('.') && m_currentLine.size() == 3) {
+            return true;
+        }        
     }
-
-    if (m_currentLine[0].contains('@') && m_currentLine[0].contains('.') && m_currentLine.size() == 2) {
-        return true;
-    }
-
+ 
     return false;
 }

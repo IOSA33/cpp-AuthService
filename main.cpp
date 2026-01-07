@@ -3,19 +3,20 @@
 #include "src/Logger/Logger.h"
 #include "src/lib/RandomString.h"
 #include <sodium.h>
+#include <windows.h>
 
 int main() {
-    if(sodium_init() < 0) {
-        std::cout << "cannot use sodium!" << '\n';
+    SetConsoleOutputCP(CP_UTF8);
+
+    if (sodium_init() < 0) {
+        std::cout << "cannot use sodium! Hashing is unsafe!" << '\n';
         return 1;
     }
-    
-    // TODO: Init config
-    Logger log{};
 
-    // TODO: Configurate application from config file
+    Logger log{};
+    
     AuthService app{&log};
     app.run();
     
-    return EXIT_SUCCESS;
+    return 0;
 }
