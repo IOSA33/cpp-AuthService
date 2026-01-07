@@ -220,7 +220,7 @@ bool Storage::deleteUser(const std::string& email) {
     return false;
 }
 
-bool Storage::updateUserPass(const std::string& email, const std::string& pass) {
+bool Storage::updateUserPass(const std::string& email, const std::string& oldPass, const std::string& newPass) {
     const std::string op { "Storage::updateUserPass" };
 
     

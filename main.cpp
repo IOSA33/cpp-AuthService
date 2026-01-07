@@ -5,6 +5,13 @@
 #include <windows.h>
 
 int main() {
+    // TODO: DOCKER
+    // TODO: wepoll
+    // TODO: json
+    // TODO: Migrations
+    // TODO: Logger
+    // TODO: TESTS
+
     // For correct language output in console
     SetConsoleOutputCP(CP_UTF8);
 

@@ -3,6 +3,7 @@
 #include <vector>
 #include <string>
 #include "Storage/Storage.h"
+#include "Network/Client/Client.h"
 
 class Logger;
 
@@ -15,6 +16,7 @@ private:
     // TODO: Logger
     Logger* m_logger{};
     std::vector<std::string> m_currentLine{};
+    Client m_client{ 8080 };
 
 public:
     // TODO: Constuctor with cfg reader

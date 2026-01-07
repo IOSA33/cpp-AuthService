@@ -21,10 +21,9 @@ void AuthService::run() {
                     if (m_storage.addUser(m_currentLine[1], m_currentLine[2])) {
                         std::cout << "Congrats! User registered!\n";
                         std::string curr_session { m_storage.createSessionID() };
-                        if (curr_session.empty()) {
-                            std::cout << "Something went wrong!\n";
-                            continue;
-                        }
+                        
+                        std::cout << "SET " + curr_session + " " + m_currentLine[1] << '\n';
+                        //m_client.sendData("SET " + curr_session + m_currentLine[1]);
 
                         std::cout << curr_session << std::endl;
 
@@ -36,13 +35,7 @@ void AuthService::run() {
                     if (m_storage.verifyUser(m_currentLine[1], m_currentLine[2])) {
                         std::cout << "Congrats! User logged in!\n";
                         std::string curr_session { m_storage.createSessionID() };
-                        if (curr_session.empty()) {
-                            std::cout << "Something went wrong!\n";
-                            continue;
-                        }
-
-                        std::cout << curr_session << std::endl;
-
+                        m_client.sendData("SET " + curr_session + " " + m_currentLine[1]);
                     } else {
                         continue;
                     }
@@ -55,7 +48,7 @@ void AuthService::run() {
             } else {
                 std::cout << "Input is Incorrect. Try again!" << '\n';
             }
-            
+
         } else {
             std::cout << "Input is empty!" << '\n';
         }

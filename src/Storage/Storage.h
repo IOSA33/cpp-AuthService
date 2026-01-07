@@ -21,7 +21,7 @@ public:
     bool checkEmail(const std::string& email);
     bool verifyUser(const std::string& email, const std::string& pass);
     bool deleteUser(const std::string& email);
-    bool updateUserPass(const std::string& email, const std::string& pass);
+    bool updateUserPass(const std::string& email, const std::string& oldPass, const std::string& newPass);
     
     std::string createSessionID();
     bool verifySessionID(const std::string& sessionID);
