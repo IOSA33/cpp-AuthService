@@ -3,18 +3,17 @@
 #include <string>
 #include <cstring>
 #include "../Storage.h"
-#include "../../lib/RandomString.h"
 
 std::string Storage::createSessionID() {
-    std::string randomStringToHash{ m_ranStrSession.generateRandom(5) };
+    const size_t BIN_SIZE { 32 };
+    unsigned char hashed_session[BIN_SIZE];
 
-    char hashed_session[crypto_pwhash_STRBYTES];
+    randombytes_buf(hashed_session, BIN_SIZE);
 
-    if (crypto_pwhash_str(hashed_session, randomStringToHash.c_str(), strlen(randomStringToHash.c_str()), crypto_pwhash_OPSLIMIT_SENSITIVE, crypto_pwhash_MEMLIMIT_SENSITIVE) != 0) {
-        std::cout << "Cannot hash password: Out of memory!\n";
-        return "";
-    }
+    const size_t HEX_SIZE = (BIN_SIZE * 2) + 1;
+    std::vector<char> hex(HEX_SIZE);
 
-    std::string session(hashed_session);
-    return session;
+    sodium_bin2hex(hex.data(), hex.size(), hashed_session, BIN_SIZE);
+
+    return std::string(hex.data());
 }

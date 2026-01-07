@@ -2,14 +2,12 @@
 
 #include <string>
 #include <pqxx/pqxx>
-#include "../lib/RandomString.h"
 
 class Storage{
 private:
     std::string m_sql{};
     pqxx::connection m_C{};
-    RandomString m_ranStrSession{};
- 
+
 public:
     explicit Storage(const std::string& db_config) : m_C(db_config) {
         connect();
