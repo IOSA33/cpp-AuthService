@@ -9,6 +9,7 @@ private:
 public:
     Client(int port) : m_port(port) {}
 
-    void sendData(const std::string& data);
+    std::string makeSocket(const std::string& data);
+    bool sendData(const std::string& data);
     bool getData(const std::string& data);
 };

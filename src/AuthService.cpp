@@ -22,10 +22,7 @@ void AuthService::run() {
                         std::cout << "Congrats! User registered!\n";
                         std::string curr_session { m_storage.createSessionID() };
                         
-                        std::cout << "SET " + curr_session + " " + m_currentLine[1] << '\n';
-                        //m_client.sendData("SET " + curr_session + m_currentLine[1]);
-
-                        std::cout << curr_session << std::endl;
+                        m_client.sendData("SET " + curr_session + " " + m_currentLine[1]);
 
                     } else {
                         continue;
@@ -35,7 +32,10 @@ void AuthService::run() {
                     if (m_storage.verifyUser(m_currentLine[1], m_currentLine[2])) {
                         std::cout << "Congrats! User logged in!\n";
                         std::string curr_session { m_storage.createSessionID() };
+                        
+                        // TODO: store ID no email
                         m_client.sendData("SET " + curr_session + " " + m_currentLine[1]);
+
                     } else {
                         continue;
                     }

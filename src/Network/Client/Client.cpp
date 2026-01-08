@@ -9,13 +9,13 @@
 #pragma comment (lib, "ws2_32.lib");
 
 // g++ Client.cpp -lws2_32 -o client
-void Client::sendData(const std::string& data) {
+std::string Client::makeSocket(const std::string& data) {
     WSADATA wsadata;
     int wsaerr;
     wsaerr = WSAStartup(MAKEWORD(2,2), &wsadata);
     if (wsaerr != 0) {
         std::cout << "Winsock dll not found" << std::endl;
-        return;
+        return "";
     } else {
         std::cout << "Winsock DLL Found" << std::endl;
         std::cout << "Status: " << wsadata.szSystemStatus << std::endl;
@@ -25,7 +25,7 @@ void Client::sendData(const std::string& data) {
     if (clientSocket == INVALID_SOCKET) {
         std::cout << "Error at socket()" << WSAGetLastError() << std::endl;
         WSACleanup();
-        return;
+        return "";
     } else {
         std::cout << "Socket is OK" << std::endl;
     }
@@ -41,7 +41,7 @@ void Client::sendData(const std::string& data) {
         std::cerr << "Can't connect to a server, Err: " << WSAGetLastError() << std::endl;
         closesocket(clientSocket);
         WSACleanup();
-        return;
+        return "";
     }
 
     char buff[512];
@@ -63,7 +63,10 @@ void Client::sendData(const std::string& data) {
         std::cout << "Server response is: [" << response << "]\n";
         std::cout << "Bytes received: [" << bytesRecv << "]\n";
 
-        response.clear();
+        closesocket(clientSocket);
+        WSACleanup();
+        return response;
+
     } else {
         // If no data is received, print an error message
         std::cerr << "recv failed: " << WSAGetLastError() << '\n';
@@ -72,10 +75,26 @@ void Client::sendData(const std::string& data) {
 
     closesocket(clientSocket);
     WSACleanup();
-    return;
+    return "";
 }
 
 bool Client::getData(const std::string& data) {
+    std::string response { makeSocket(data) };
+    
+    if (!response.empty()) {
+        return true;
+    }
 
     return false;
 }
+
+bool Client::sendData(const std::string& data) {
+    std::string response { makeSocket(data) };
+    
+    if (!response.empty()) {
+        return true;
+    }
+
+    return false;
+}
+

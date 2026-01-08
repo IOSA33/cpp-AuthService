@@ -108,7 +108,8 @@ bool Storage::checkEmail(const std::string& email) {
     try {
         pqxx::nontransaction N(m_C);
         pqxx::result R( N.exec_params(m_sql.c_str(), email));
-        if (R.empty()) {
+        bool exists { R[0][0].as<bool>() };
+        if (!exists) {
             std::cout << "Email does not exists\n";
             return false;
         }
@@ -130,13 +131,14 @@ bool Storage::checkEmail(const std::string& email) {
 bool Storage::addUser(const std::string& email, const std::string& pass) {
     const std::string op { "Storage::addUser" };
     m_sql.clear();
-
     // Because hashing is slow operation (1-2 sec) we should first check if user exists
     // If so we early return false from this function
     bool result { checkEmail(email) };
     if (result) {
         return false;
     }
+
+    m_sql.clear();
 
     if (m_sql.empty()) {
         m_sql = "INSERT INTO users (email, pass_hash) VALUES ($1, $2);"; 
