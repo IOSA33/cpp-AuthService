@@ -20,30 +20,31 @@ void AuthService::run() {
                 if (m_currentLine[0] == "REG") {
                     if (m_storage.addUser(m_currentLine[1], m_currentLine[2])) {
                         std::cout << "Congrats! User registered!\n";
-                        std::string curr_session { m_storage.createSessionID() };
-                        
-                        m_client.sendData("SET " + curr_session + " " + m_currentLine[1]);
+                        std::cout << m_storage.createSessionID(m_currentLine[1]) << '\n';
 
                     } else {
                         continue;
                     }
+                }
 
-                } else if (m_currentLine[0] == "LOG") {
+                if (m_currentLine[0] == "LOG") {
                     if (m_storage.verifyUser(m_currentLine[1], m_currentLine[2])) {
                         std::cout << "Congrats! User logged in!\n";
-                        std::string curr_session { m_storage.createSessionID() };
-                        
-                        // TODO: store ID no email
-                        m_client.sendData("SET " + curr_session + " " + m_currentLine[1]);
+                        std::cout << m_storage.createSessionID(m_currentLine[1]) << '\n';
 
                     } else {
                         continue;
                     }
+                }  
 
-                } else {
-                    std::cout << "Unknown Command try again!" << '\n';
+                // Returns value of the session
+                if (m_currentLine[0] == "GET") {
+                    std::string result{ m_storage.getDataSessionID(m_currentLine[1]) }; 
+                    std::cout << result << '\n';
                     continue;
                 }
+                
+                std::cout << "Unknown Command try again!" << '\n';
 
             } else {
                 std::cout << "Input is Incorrect. Try again!" << '\n';
@@ -70,10 +71,14 @@ bool AuthService::parser(const std::string& input) {
         m_currentLine.emplace_back(temp);
     }
 
-    if (m_currentLine.size() > 2) {
+    if (m_currentLine.size() >= 2) {
         if (m_currentLine[1].contains('@') && m_currentLine[1].contains('.') && m_currentLine.size() == 3) {
             return true;
-        }        
+        }
+
+        if(m_currentLine[0] == "GET" && m_currentLine.size() == 2) {
+            return true;
+        }
     }
  
     return false;

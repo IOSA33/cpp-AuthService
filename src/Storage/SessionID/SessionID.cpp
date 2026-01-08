@@ -4,7 +4,7 @@
 #include <cstring>
 #include "../Storage.h"
 
-std::string Storage::createSessionID() {
+bool Storage::createSessionID(const std::string& payload) {
     const size_t BIN_SIZE { 32 };
     unsigned char hashed_session[BIN_SIZE];
 
@@ -15,5 +15,16 @@ std::string Storage::createSessionID() {
 
     sodium_bin2hex(hex.data(), hex.size(), hashed_session, BIN_SIZE);
 
-    return std::string(hex.data());
+    m_client.sendData("SET " + std::string(hex.data()) + " " + payload);
+}
+
+// Checks session in my own Redis
+std::string Storage::getDataSessionID(const std::string& sessionID) {
+    std::string result { m_client.getData("GET " + sessionID) };
+
+    if (!result.empty()) {
+        return result;
+    }
+
+    return "No Value!";
 }

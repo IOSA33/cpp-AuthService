@@ -17,8 +17,8 @@ std::string Client::makeSocket(const std::string& data) {
         std::cout << "Winsock dll not found" << std::endl;
         return "";
     } else {
-        std::cout << "Winsock DLL Found" << std::endl;
-        std::cout << "Status: " << wsadata.szSystemStatus << std::endl;
+        // std::cout << "Winsock DLL Found" << std::endl;
+        // std::cout << "Status: " << wsadata.szSystemStatus << std::endl;
     }
 
     SOCKET clientSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
@@ -27,7 +27,7 @@ std::string Client::makeSocket(const std::string& data) {
         WSACleanup();
         return "";
     } else {
-        std::cout << "Socket is OK" << std::endl;
+        // std::cout << "Socket is OK" << std::endl;
     }
 
     // Client side hint
@@ -78,14 +78,14 @@ std::string Client::makeSocket(const std::string& data) {
     return "";
 }
 
-bool Client::getData(const std::string& data) {
+std::string Client::getData(const std::string& data) {
     std::string response { makeSocket(data) };
     
     if (!response.empty()) {
-        return true;
+        return response;
     }
 
-    return false;
+    return "";
 }
 
 bool Client::sendData(const std::string& data) {
