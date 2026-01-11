@@ -15,8 +15,8 @@ int start() {
         std::cout << "Winsock dll not found" << std::endl;
         return 1;
     } else {
-        std::cout << "winsock DLL Found" << std::endl;
-        std::cout << "Status: " << wsadata.szSystemStatus << std::endl;
+        // std::cout << "winsock DLL Found" << std::endl;
+        // std::cout << "Status: " << wsadata.szSystemStatus << std::endl;
     }
 
     SOCKET in = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
@@ -25,7 +25,7 @@ int start() {
         WSACleanup();
         return 1;
     } else {
-        std::cout << "Socket is OK" << std::endl;
+        // std::cout << "Socket is OK" << std::endl;
     }
 
     sockaddr_in addr;
@@ -40,7 +40,7 @@ int start() {
     }
 
     while(true) {
-
+        break;
     }
 
     WSACleanup();

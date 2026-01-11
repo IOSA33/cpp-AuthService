@@ -16,6 +16,8 @@ bool Storage::createSessionID(const std::string& payload) {
     sodium_bin2hex(hex.data(), hex.size(), hashed_session, BIN_SIZE);
 
     m_client.sendData("SET " + std::string(hex.data()) + " " + payload);
+
+    return true;
 }
 
 // Checks session in my own Redis

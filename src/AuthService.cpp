@@ -3,6 +3,15 @@
 #include <string>
 #include <algorithm>
 
+// Commands
+// REG [email] [pass] : return sessionID
+// LOG [email] [pass] : return sessionID
+// GET [sessionID] : if sessionID exists returns value of it, otherwise null
+// UPD [sessionID] : updates current sessionID TTL
+// OUT [sessionID] : deletes sessionID
+// OUTALL [email] : deleted every sessionID that user has
+
+// Just for local run without server
 void AuthService::run() {
     while (true) {
         std::cout << "\nCommands:" << '\n';
@@ -21,7 +30,7 @@ void AuthService::run() {
                     if (m_storage.addUser(m_currentLine[1], m_currentLine[2])) {
                         std::cout << "Congrats! User registered!\n";
                         std::cout << m_storage.createSessionID(m_currentLine[1]) << '\n';
-
+                        continue;
                     } else {
                         continue;
                     }
@@ -31,7 +40,7 @@ void AuthService::run() {
                     if (m_storage.verifyUser(m_currentLine[1], m_currentLine[2])) {
                         std::cout << "Congrats! User logged in!\n";
                         std::cout << m_storage.createSessionID(m_currentLine[1]) << '\n';
-
+                        continue;
                     } else {
                         continue;
                     }
@@ -40,7 +49,7 @@ void AuthService::run() {
                 // Returns value of the session
                 if (m_currentLine[0] == "GET") {
                     std::string result{ m_storage.getDataSessionID(m_currentLine[1]) }; 
-                    std::cout << result << '\n';
+                    // std::cout << result << '\n';
                     continue;
                 }
                 
