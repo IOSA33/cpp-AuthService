@@ -17,7 +17,8 @@ void AuthService::run() {
         std::cout << "\nCommands:" << '\n';
         std::cout << "1) REG [EMAIL] [PASSWORD]" << '\n';
         std::cout << "2) LOG [EMAIL] [PASSWORD]" << '\n';
-        
+        std::cout << "3) GET [sessionID]" << '\n';
+
         m_currentLine.clear();
         std::string input{};
         std::getline(std::cin >> std::ws, input);
