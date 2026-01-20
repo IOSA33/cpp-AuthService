@@ -30,3 +30,13 @@ std::string Storage::getDataSessionID(const std::string& sessionID) {
 
     return "No Value!";
 }
+
+bool Storage::revokeSessionID(const std::string& sessionID) {
+    std::string result { m_client.getData("DELETE " + sessionID) };
+
+    if (!result.empty()) {
+        return false;
+    }
+
+    return true;
+}
