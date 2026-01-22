@@ -4,8 +4,6 @@ project(authService VERSION 0.1)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-add_compile_options(-Wno-cpp)
-
 # Unit Tests
 find_package(libpqxx REQUIRED)
 find_package(GTest REQUIRED)
