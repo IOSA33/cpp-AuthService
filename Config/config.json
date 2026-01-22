@@ -1,4 +1,9 @@
 {
     "env": "local",
-    "port": 9090
+    "port": 9090,
+    "auth": [{
+        "jwt-secret": "someSecret",
+        "access_ttl": "600",
+        "refresh_ttl": "1200"
+    }]
 }

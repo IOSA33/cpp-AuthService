@@ -3,7 +3,7 @@
 class Logger{
 private:
 
-    // TODO: logs to txt and db
+    // TODO: logs to txt
 
 public:
     Logger() = default;

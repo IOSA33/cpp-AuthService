@@ -6,8 +6,20 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 add_compile_options(-Wno-cpp)
 
+# Unit Tests
 find_package(libpqxx REQUIRED)
+find_package(GTest REQUIRED)
+add_executable(unit_tests Tests/AuthService_unittest.cc
+                          src/AuthService.cpp
+                          src/Storage/Storage.cpp
+                          src/Network/Client/Client.cpp
+                          src/Storage/SessionID/SessionID.cpp)
+target_link_libraries(unit_tests PRIVATE GTest::GTest)
+target_link_libraries(unit_tests PRIVATE libpqxx::pqxx)
+target_link_libraries(unit_tests PRIVATE sodium)
 
+# Main app
+find_package(libpqxx REQUIRED)
 add_executable(app main.cpp
                    src/AuthService.cpp
                    src/Storage/Storage.cpp

@@ -18,7 +18,7 @@ private:
 
 public:
     // TODO: Constuctor with cfg reader
-    AuthService(Logger* logger) 
+    AuthService(Logger* logger = nullptr) 
         : m_logger(logger) {}
     ~AuthService() {}
 
