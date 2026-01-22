@@ -13,10 +13,10 @@ int main() {
         return 1;
     }
 
-    Logger log{};
-
+    // Initializing Logger
+    Logger log{ "Config/config.json" };
     // Initializing App
-    AuthService app{&log};
+    AuthService app{ &log };
     // Starting App
     app.run();
     

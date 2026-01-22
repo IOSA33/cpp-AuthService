@@ -1,6 +1,7 @@
 {
     "env": "local",
-    "port": 9090,
+    "clientPort": 8080,
+    "serverPort": 9090,
     "auth": [{
         "jwt-secret": "someSecret",
         "access_ttl": "600",

@@ -1,10 +1,11 @@
 #pragma once
 
+#include <string>
+
 class Logger{
 private:
-
-    // TODO: logs to txt
-
+    std::string m_path{};
 public:
-    Logger() = default;
+    Logger(const std::string& path) 
+        : m_path(path) {}
 };
