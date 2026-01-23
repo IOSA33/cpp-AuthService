@@ -66,7 +66,7 @@ bool Storage::getUserInfo(const std::string& email) {
 
     try {
         pqxx::nontransaction N(m_C);
-        pqxx::result R( N.exec_params(m_sql.c_str(), email));
+        pqxx::result R( N.exec(m_sql, pqxx::params{ email }));
         if (R.empty()) {
             std::cout << op << ", No such email!\n";
             return false;
@@ -107,7 +107,7 @@ bool Storage::checkEmail(const std::string& email) {
     // If true email exists, false email does not exists in db
     try {
         pqxx::nontransaction N(m_C);
-        pqxx::result R( N.exec_params(m_sql.c_str(), email));
+        pqxx::result R( N.exec(m_sql, pqxx::params{ email }));
         bool exists { R[0][0].as<bool>() };
         if (!exists) {
             return false;
@@ -154,7 +154,7 @@ bool Storage::addUser(const std::string& email, const std::string& pass) {
 
     try {
         pqxx::work W(m_C);
-        pqxx::result result = W.exec_params(m_sql.c_str(), email, hashed_password);
+        pqxx::result result = W.exec(m_sql, pqxx::params{ email, hashed_password });
         W.commit();
         if (result.affected_rows() > 0 ) {
             std::cout << "User added successfully!" << '\n';
@@ -185,7 +185,7 @@ bool Storage::verifyUser(const std::string& email, const std::string& pass) {
 
     try {
         pqxx::nontransaction N(m_C);
-        pqxx::result R( N.exec_params(m_sql.c_str(), email));
+        pqxx::result R( N.exec(m_sql, pqxx::params{ email }));
         if(R.empty()) {
             std::cout << op << ", No email found!\n";
             return false;
@@ -227,7 +227,7 @@ bool Storage::deleteUser(const std::string& email) {
 
     try {
         pqxx::work W(m_C);
-        pqxx::result result = W.exec_params(m_sql.c_str(), email);
+        pqxx::result result = W.exec(m_sql, pqxx::params{ email });
         W.commit();
         if (result.affected_rows() > 0 ) {
             std::cout << email << " deleted successfully!" << '\n';
@@ -266,7 +266,7 @@ bool Storage::updateUserPass(const std::string& email, const std::string& oldPas
 
     try {
         pqxx::work W(m_C);
-        pqxx::result result = W.exec_params(m_sql.c_str(), newPass, email);
+        pqxx::result result = W.exec(m_sql, pqxx::params{ newPass, email });
         if (result.affected_rows() > 0) {
             std::cout << "Password successfully updated!" << '\n';
             return true;
