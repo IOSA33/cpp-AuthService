@@ -160,6 +160,7 @@ bool Storage::addUser(const std::string& email, const std::string& pass) {
             std::cout << "User added successfully!" << '\n';
             return true; 
         }
+        return false;
     } catch (const pqxx::sql_error &e) {
         std::cerr << op << ", What: " << e.what() << std::endl;
         return false;
@@ -198,9 +199,8 @@ bool Storage::verifyUser(const std::string& email, const std::string& pass) {
             std::cout << "Password is correct!" << '\n';
             return true;
         }
-
         return false;
-
+        
     } catch (const pqxx::sql_error &e) {
         std::cerr << op << ", What: " << e.what() << '\n';
         return false;
@@ -216,14 +216,71 @@ bool Storage::verifyUser(const std::string& email, const std::string& pass) {
 // TODO: delteUser
 bool Storage::deleteUser(const std::string& email) {
     const std::string op { "Storage::deleteUser" };
-    
-    
+    m_sql.clear();
+
+    if(m_sql.empty()) {
+        m_sql = "DELETE FROM users WHERE email = ($1);";
+    } else {
+        std::cout << op << ", cmd is not a empty string!" << '\n';
+        return false;
+    }
+
+    try {
+        pqxx::work W(m_C);
+        pqxx::result result = W.exec_params(m_sql.c_str(), email);
+        W.commit();
+        if (result.affected_rows() > 0 ) {
+            std::cout << email << " deleted successfully!" << '\n';
+            return true; 
+        }
+        return false;
+
+    } catch (const pqxx::sql_error &e) {
+        std::cerr << op << ", What: " << e.what() << '\n';
+        return false;
+
+    } catch (const std::exception &e) {
+        std::cerr << op << ", General error: " << e.what() << '\n';
+        return false;
+    }
+
     return false;
 }
 
 bool Storage::updateUserPass(const std::string& email, const std::string& oldPass, const std::string& newPass) {
     const std::string op { "Storage::updateUserPass" };
-
     
+    // Before updating we should verify given old password for correctness
+    if (!verifyUser(email, oldPass)) {
+        return false;
+    }
+    
+    m_sql.clear();
+
+    if (m_sql.empty()) {
+        m_sql = "UPDATE users SET pass_hash = ($1) WHERE email = ($2);";
+    } else {
+        std::cout << op << ", cmd is not a empty string!" << '\n';
+        return false;
+    }
+
+    try {
+        pqxx::work W(m_C);
+        pqxx::result result = W.exec_params(m_sql.c_str(), newPass, email);
+        if (result.affected_rows() > 0) {
+            std::cout << "Password successfully updated!" << '\n';
+            return true;
+        }
+        return false;
+
+    } catch (const pqxx::sql_error &e) {
+        std::cerr << op << ", What: " << e.what() << '\n';
+        return false;
+
+    }  catch (const std::exception &e) {
+        std::cerr << op << ", General error: " << e.what() << '\n';
+        return false;
+    }
+
     return false;
 }

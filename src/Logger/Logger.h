@@ -8,4 +8,6 @@ private:
 public:
     Logger(const std::string& path) 
         : m_path(path) {}
+
+    void writeToFile();
 };
