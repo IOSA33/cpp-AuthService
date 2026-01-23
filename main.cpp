@@ -9,7 +9,7 @@ int main() {
     SetConsoleOutputCP(CP_UTF8);
 
     if (sodium_init() < 0) {
-        std::cout << "cannot use sodium! Hashing is unsafe!" << '\n';
+        std::cout << "Cannot use sodium! Hashing is unsafe!" << '\n';
         return 1;
     }
 

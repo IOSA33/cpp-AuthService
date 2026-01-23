@@ -18,6 +18,8 @@ void AuthService::run() {
         std::cout << "1) REG [EMAIL] [PASSWORD]" << '\n';
         std::cout << "2) LOG [EMAIL] [PASSWORD]" << '\n';
         std::cout << "3) GET [sessionID]" << '\n';
+        std::cout << "4) UPDATE [EMAIL] [OLD_PASS] [NEW_PASS]" << '\n';
+        std::cout << "5) DELETE [EMAIL] [PASSWORD]" << '\n';
 
         m_currentLine.clear();
         std::string input{};
@@ -45,12 +47,31 @@ void AuthService::run() {
                     } else {
                         continue;
                     }
-                }  
+                }
+
+                if (m_currentLine[0] == "UPDATE") {
+                    if (m_storage.updateUserPass(m_currentLine[1], m_currentLine[2], m_currentLine[3])) {
+                        std::cout << "Congrats! User UPDATED!\n";
+                        std::cout << m_storage.createSessionID(m_currentLine[1]) << '\n';
+                        continue;
+                    } else {
+                        continue;
+                    }
+                }
+
+                if (m_currentLine[0] == "DELETE") {
+                    if (m_storage.deleteUser(m_currentLine[1], m_currentLine[2])) {
+                        std::cout << "Congrats! User DELETED!\n";
+                        continue;
+                    } else {
+                        continue;
+                    }
+                }
 
                 // Returns value of the session
                 if (m_currentLine[0] == "GET") {
-                    std::string result{ m_storage.getDataSessionID(m_currentLine[1]) }; 
-                    // std::cout << result << '\n';
+                    // std::string result{ m_storage.getDataSessionID(m_currentLine[1]) }; 
+                    std::cout << "GET some result!" << '\n';
                     continue;
                 }
                 
@@ -81,12 +102,21 @@ bool AuthService::parser(const std::string& input) {
         m_currentLine.emplace_back(temp);
     }
 
-    if (m_currentLine.size() >= 2) {
-        if (m_currentLine[1].contains('@') && m_currentLine[1].contains('.') && m_currentLine.size() == 3) {
+    if(m_currentLine[0] == "GET" && m_currentLine.size() == 2) {
+        return true;
+    }
+    
+    if (m_currentLine.size() >= 3 && m_currentLine[1].contains('@') && m_currentLine[1].contains('.')) {
+        if (m_currentLine[0] == "REG" && m_currentLine.size() == 3) {
             return true;
         }
-
-        if(m_currentLine[0] == "GET" && m_currentLine.size() == 2) {
+        if(m_currentLine[0] == "LOG" && m_currentLine.size() == 3) {
+            return true;
+        }
+        if(m_currentLine[0] == "DELETE" && m_currentLine.size() == 3) {
+            return true;
+        }
+        if(m_currentLine[0] == "UPDATE" && m_currentLine.size() == 4) {
             return true;
         }
     }

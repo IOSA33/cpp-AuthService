@@ -22,7 +22,7 @@ public:
     bool addUser(const std::string& email, const std::string& pass);
     bool checkEmail(const std::string& email);
     bool verifyUser(const std::string& email, const std::string& pass);
-    bool deleteUser(const std::string& email);
+    bool deleteUser(const std::string& email, const std::string& pass);
     bool updateUserPass(const std::string& email, const std::string& oldPass, const std::string& newPass);
     
     bool createSessionID(const std::string& payload);

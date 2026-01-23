@@ -26,9 +26,10 @@ void Storage::init() {
 
     // Creating a new database if not already exists
     if (m_sql.empty()) {
-        m_sql = "CREATE TABLE IF NOT EXISTS users("
+        m_sql = "CREATE COLLATION IF NOT EXISTS ignore_accent_case (provider = icu, deterministic = false, locale = 'und-u-ks-level1');"
+                "CREATE TABLE IF NOT EXISTS users("
                     "id         SERIAL PRIMARY KEY,"
-                    "email      TEXT NOT NULL UNIQUE,"
+                    "email      TEXT COLLATE ignore_accent_case NOT NULL UNIQUE,"
                     "pass_hash  TEXT NOT NULL"
                 ");"
                 "CREATE INDEX IF NOT EXISTS idx_email ON users (email);";
@@ -116,7 +117,7 @@ bool Storage::checkEmail(const std::string& email) {
         return true;
 
     } catch (const pqxx::sql_error &e) {
-        std::cerr << op << ", What: " << e.what() << '\n';
+        std::cerr << op << ", SQL error: " << e.what() << '\n';
         return false;
     } catch (const std::exception &e) {
         std::cerr << op << ", General error: " << e.what() << '\n';
@@ -162,7 +163,7 @@ bool Storage::addUser(const std::string& email, const std::string& pass) {
         }
         return false;
     } catch (const pqxx::sql_error &e) {
-        std::cerr << op << ", What: " << e.what() << std::endl;
+        std::cerr << op << ", SQL error: " << e.what() << std::endl;
         return false;
     } catch (const std::exception &e) {
         std::cerr << op << ", General error: " << e.what() << std::endl;
@@ -202,7 +203,7 @@ bool Storage::verifyUser(const std::string& email, const std::string& pass) {
         return false;
         
     } catch (const pqxx::sql_error &e) {
-        std::cerr << op << ", What: " << e.what() << '\n';
+        std::cerr << op << ", SQL error: " << e.what() << '\n';
         return false;
 
     } catch (const std::exception &e) {
@@ -213,11 +214,15 @@ bool Storage::verifyUser(const std::string& email, const std::string& pass) {
     return false;
 }
 
-// TODO: delteUser
-bool Storage::deleteUser(const std::string& email) {
+bool Storage::deleteUser(const std::string& email, const std::string& pass) {
     const std::string op { "Storage::deleteUser" };
-    m_sql.clear();
+    // Before updating we should verify given password for correctness
+    if (!verifyUser(email, pass)) {
+        return false;
+    }
 
+    m_sql.clear();
+    
     if(m_sql.empty()) {
         m_sql = "DELETE FROM users WHERE email = ($1);";
     } else {
@@ -236,7 +241,7 @@ bool Storage::deleteUser(const std::string& email) {
         return false;
 
     } catch (const pqxx::sql_error &e) {
-        std::cerr << op << ", What: " << e.what() << '\n';
+        std::cerr << op << ", SQL error: " << e.what() << '\n';
         return false;
 
     } catch (const std::exception &e) {
@@ -249,7 +254,6 @@ bool Storage::deleteUser(const std::string& email) {
 
 bool Storage::updateUserPass(const std::string& email, const std::string& oldPass, const std::string& newPass) {
     const std::string op { "Storage::updateUserPass" };
-    
     // Before updating we should verify given old password for correctness
     if (!verifyUser(email, oldPass)) {
         return false;
@@ -264,9 +268,16 @@ bool Storage::updateUserPass(const std::string& email, const std::string& oldPas
         return false;
     }
 
+    char hashed_password[crypto_pwhash_STRBYTES];
+    if (crypto_pwhash_str(hashed_password, newPass.c_str(), strlen(newPass.c_str()), crypto_pwhash_OPSLIMIT_SENSITIVE, crypto_pwhash_MEMLIMIT_SENSITIVE) != 0) {
+        std::cout << "Cannot hash password: Out of memory!\n";
+        return false;
+    }
+
     try {
         pqxx::work W(m_C);
-        pqxx::result result = W.exec(m_sql, pqxx::params{ newPass, email });
+        pqxx::result result = W.exec(m_sql, pqxx::params{ hashed_password, email });
+        W.commit();
         if (result.affected_rows() > 0) {
             std::cout << "Password successfully updated!" << '\n';
             return true;
@@ -274,7 +285,7 @@ bool Storage::updateUserPass(const std::string& email, const std::string& oldPas
         return false;
 
     } catch (const pqxx::sql_error &e) {
-        std::cerr << op << ", What: " << e.what() << '\n';
+        std::cerr << op << ", SQL error: " << e.what() << '\n';
         return false;
 
     }  catch (const std::exception &e) {

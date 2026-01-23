@@ -15,12 +15,13 @@ bool Storage::createSessionID(const std::string& payload) {
 
     sodium_bin2hex(hex.data(), hex.size(), hashed_session, BIN_SIZE);
 
-    m_client.sendData("SET " + std::string(hex.data()) + " " + payload);
+    // This is sending tcp request for my own implementation of Redis
+    //m_client.sendData("SET " + std::string(hex.data()) + " " + payload);
 
     return true;
 }
 
-// Checks session in my own Redis
+// Checks session in my own implementation of Redis
 std::string Storage::getDataSessionID(const std::string& sessionID) {
     std::string result { m_client.getData("GET " + sessionID) };
 
@@ -33,6 +34,17 @@ std::string Storage::getDataSessionID(const std::string& sessionID) {
 
 bool Storage::revokeSessionID(const std::string& sessionID) {
     std::string result { m_client.getData("DELETE " + sessionID) };
+
+    if (!result.empty()) {
+        return false;
+    }
+
+    return true;
+}
+
+// TODO:
+bool Storage::refreshSessionID(const std::string& sessionID) {
+    std::string result { m_client.getData("UPDATE " + sessionID) };
 
     if (!result.empty()) {
         return false;

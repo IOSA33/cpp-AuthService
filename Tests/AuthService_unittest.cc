@@ -1,5 +1,6 @@
 #include "../src/AuthService.h"
 #include <gtest/gtest.h>
+#include <windows.h>
 
 namespace authTest {
     TEST(parserTest, TooManyArgs) {
@@ -37,6 +38,8 @@ namespace authTest {
 }
 
 int main(int argc, char **argv) {
+  // for correct console input "sql" 
+  SetConsoleOutputCP(CP_UTF8);
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }
