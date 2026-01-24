@@ -2,6 +2,8 @@
 #include <iostream>
 #include <string>
 #include <algorithm>
+#include <print>
+#include "Logger/Logger.h"
 
 // Commands
 // REG [email] [pass] : return sessionID
@@ -33,6 +35,7 @@ void AuthService::run() {
                     if (m_storage.addUser(m_currentLine[1], m_currentLine[2])) {
                         std::cout << "Congrats! User registered!\n";
                         std::cout << m_storage.createSessionID(m_currentLine[1]) << '\n';
+                        writeLogCMD();
                         continue;
                     } else {
                         continue;
@@ -43,6 +46,7 @@ void AuthService::run() {
                     if (m_storage.verifyUser(m_currentLine[1], m_currentLine[2])) {
                         std::cout << "Congrats! User logged in!\n";
                         std::cout << m_storage.createSessionID(m_currentLine[1]) << '\n';
+                        writeLogCMD();
                         continue;
                     } else {
                         continue;
@@ -53,6 +57,7 @@ void AuthService::run() {
                     if (m_storage.updateUserPass(m_currentLine[1], m_currentLine[2], m_currentLine[3])) {
                         std::cout << "Congrats! User UPDATED!\n";
                         std::cout << m_storage.createSessionID(m_currentLine[1]) << '\n';
+                        writeLogCMD();
                         continue;
                     } else {
                         continue;
@@ -62,6 +67,7 @@ void AuthService::run() {
                 if (m_currentLine[0] == "DELETE") {
                     if (m_storage.deleteUser(m_currentLine[1], m_currentLine[2])) {
                         std::cout << "Congrats! User DELETED!\n";
+                        writeLogCMD();
                         continue;
                     } else {
                         continue;
@@ -122,4 +128,13 @@ bool AuthService::parser(const std::string& input) {
     }
  
     return false;
+}
+
+void AuthService::writeLogCMD() {
+    const std::string op { "AuthService::writeLogCMD()" };
+    if (m_logger) {
+        m_logger->writeToFile(m_currentLine[0], m_currentLine[1]);
+    } else {
+        std::print("{} ptr is null", op);
+    }
 }

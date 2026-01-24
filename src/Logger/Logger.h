@@ -9,5 +9,5 @@ public:
     Logger(const std::string& path) 
         : m_path(path) {}
 
-    void writeToFile();
+    void writeToFile(const std::string& typeCommand, const std::string& email);
 };

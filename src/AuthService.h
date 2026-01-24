@@ -21,4 +21,5 @@ public:
 
     void run();
     bool parser(const std::string& input);
+    void writeLogCMD();
 };

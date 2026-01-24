@@ -1,7 +1,7 @@
 # cpp-AuthService with Network
 - PostgreSQL database
 - Client-server communication via Winsock2 over TCP protocol.
-- Communication with my other servers
+- Migration files
 - libSodium for hashing passwords
 - Implemented Dockerfile
 - Using gTests for unit testing
