@@ -1,7 +1,7 @@
 # cpp-AuthService with Network
 - PostgreSQL database
 - Client-server communication via Winsock2 over TCP protocol.
-- Migration files
+- Communication with my own implementation of Redis
 - libSodium for hashing passwords
 - Implemented Dockerfile
 - Using gTests for unit testing
@@ -12,6 +12,7 @@
 - `GET [sessionID]` - Returns JSON data from sessionId
 - `UPDATE [EMAIL] [OLD_PASS] [NEW_PASS]` - Updates password of the user 
 - `DELETE [EMAIL] [PASSWORD]` - Deletes users account from database
+- `LOGOUT [EMAIL] [sessionID]` - Doing logout from the account
 
 # How to Start:
 - For graceful shotdown the server write in running `./server.exe` following command `exit` .
