@@ -23,11 +23,12 @@ int main() {
 
     ConfigSpace::Config cfg { ConfigSpace::MustLoad("../Config/config.json") };
     Logger log{ "LogForCMDs.txt" };
-
     AuthService app{ &log, &cfg };
+
 
     app.run();
     
+
     return 0;
 }
 
