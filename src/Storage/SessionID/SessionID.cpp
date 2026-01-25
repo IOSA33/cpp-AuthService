@@ -29,11 +29,11 @@ std::string Storage::getDataSessionID(const std::string& sessionID) {
         return result;
     }
 
-    return "No Value!";
+    return "";
 }
 
 bool Storage::revokeSessionID(const std::string& sessionID) {
-    std::string result { m_client.getData("DELETE " + sessionID) };
+    std::string result { m_client.getData("DEL " + sessionID) };
 
     if (!result.empty()) {
         return false;
@@ -42,9 +42,18 @@ bool Storage::revokeSessionID(const std::string& sessionID) {
     return true;
 }
 
-// TODO:
-bool Storage::refreshSessionID(const std::string& sessionID) {
-    std::string result { m_client.getData("UPDATE " + sessionID) };
+bool Storage::revokeAllSessionID(const std::string& email) {
+    std::string result { m_client.getData("DELT " + email) };
+
+    if (!result.empty()) {
+        return false;
+    }
+
+    return true;
+}
+
+bool Storage::refreshSessionID(const std::string& sessionID, int ttl) {
+    std::string result { m_client.getData("SET " + sessionID + " " + std::to_string(ttl)) };
 
     if (!result.empty()) {
         return false;

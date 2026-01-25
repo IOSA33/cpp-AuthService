@@ -5,12 +5,14 @@
 #include "Storage/Storage.h"
 
 class Logger;
-ConfigSpace::Config;
+namespace ConfigSpace {
+    class Config;
+}
 
 class AuthService{
 private:
-    Storage m_storage{"dbname = postgres user = postgres password = 1234 \
-             hostaddr = 127.0.0.1 port = 5432"};
+    Storage m_storage{ "dbname = postgres user = postgres password = 1234 \
+             hostaddr = 127.0.0.1 port = 5432", 8080 };
     Logger* m_logger{};
     ConfigSpace::Config* m_config{};
 

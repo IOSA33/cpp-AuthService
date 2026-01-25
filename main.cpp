@@ -21,13 +21,11 @@ int main() {
 
     printCurrectTime();
 
-    // Initializing Config
     ConfigSpace::Config cfg { ConfigSpace::MustLoad("../Config/config.json") };
-    // Initializing Logger
     Logger log{ "LogForCMDs.txt" };
-    // Initializing App
+
     AuthService app{ &log, &cfg };
-    // Starting App
+
     app.run();
     
     return 0;

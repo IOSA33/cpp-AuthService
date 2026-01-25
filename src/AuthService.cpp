@@ -4,15 +4,15 @@
 #include <algorithm>
 #include <print>
 #include "Logger/Logger.h"
-#include "src/Config/Config.h"
+#include "Config/Config.h"
 
 // Commands
 // REG [email] [pass] : return sessionID
 // LOG [email] [pass] : return sessionID
 // GET [sessionID] : if sessionID exists returns value of it, otherwise null
-// UPD [sessionID] : updates current sessionID TTL
-// OUT [sessionID] : deletes sessionID
-// OUTALL [email] : deleted every sessionID that user has
+// UPDATE [EMAIL] [OLD_PASS] [NEW_PASS] : updates current password
+// DELETE [EMAIL] [PASSWORD] : deleted every sessionID that user has
+// LOGOUT [EMAIL] [sessionID] : deletes sessionID
 
 // Just for local run without server
 void AuthService::run() {
@@ -23,6 +23,7 @@ void AuthService::run() {
         std::cout << "3) GET [sessionID]" << '\n';
         std::cout << "4) UPDATE [EMAIL] [OLD_PASS] [NEW_PASS]" << '\n';
         std::cout << "5) DELETE [EMAIL] [PASSWORD]" << '\n';
+        std::cout << "6) LOGOUT [EMAIL] [sessionID]" << '\n';
 
         m_currentLine.clear();
         std::string input{};
@@ -57,7 +58,10 @@ void AuthService::run() {
                 if (m_currentLine[0] == "UPDATE") {
                     if (m_storage.updateUserPass(m_currentLine[1], m_currentLine[2], m_currentLine[3])) {
                         std::cout << "Congrats! User UPDATED!\n";
-                        std::cout << m_storage.createSessionID(m_currentLine[1], m_config->auth.access_ttl) << '\n';
+                        // Firstly we revoke all old sessionid of the user
+                        m_storage.revokeAllSessionID(m_currentLine[1]);
+                        // Then we create new one
+                        m_storage.createSessionID(m_currentLine[1], m_config->auth.access_ttl);
                         writeLogCMD();
                         continue;
                     } else {
@@ -68,6 +72,20 @@ void AuthService::run() {
                 if (m_currentLine[0] == "DELETE") {
                     if (m_storage.deleteUser(m_currentLine[1], m_currentLine[2])) {
                         std::cout << "Congrats! User DELETED!\n";
+                        // Firstly we revoke all old sessionid of the user
+                        m_storage.revokeAllSessionID(m_currentLine[1]);
+                        writeLogCMD();
+                        continue;
+                    } else {
+                        continue;
+                    }
+                }
+
+                if (m_currentLine[0] == "LOGOUT") {
+                    if (m_storage.checkEmail(m_currentLine[1])) {
+                        std::cout << "Congrats! User lOGOUT!\n";
+                        // Revoking sessionId
+                        m_storage.revokeSessionID(m_currentLine[2]);
                         writeLogCMD();
                         continue;
                     } else {
@@ -77,12 +95,21 @@ void AuthService::run() {
 
                 // Returns value of the session
                 if (m_currentLine[0] == "GET") {
-                    // std::string result{ m_storage.getDataSessionID(m_currentLine[1]) }; 
+                    std::string result{ m_storage.getDataSessionID(m_currentLine[1]) }; 
+
+                    if (result.empty()) {
+                        std::cout << "No value!" << '\n';
+                        continue;
+                    }
+
+                    // After every success of getting data we refreshing current sessionId
+                    m_storage.refreshSessionID(m_currentLine[1], m_config->auth.refresh_ttl);
+
                     std::cout << "GET some result!" << '\n';
                     continue;
                 }
                 
-                std::cout << "Unknown Command try again!" << '\n';
+                std::cout << "Input is Incorrect. Try again!" << '\n';
 
             } else {
                 std::cout << "Input is Incorrect. Try again!" << '\n';
@@ -109,23 +136,14 @@ bool AuthService::parser(const std::string& input) {
         m_currentLine.emplace_back(temp);
     }
 
-    if(m_currentLine[0] == "GET" && m_currentLine.size() == 2) {
-        return true;
-    }
+    if(m_currentLine[0] == "GET" && m_currentLine.size() == 2) return true;
     
     if (m_currentLine.size() >= 3 && m_currentLine[1].contains('@') && m_currentLine[1].contains('.')) {
-        if (m_currentLine[0] == "REG" && m_currentLine.size() == 3) {
-            return true;
-        }
-        if(m_currentLine[0] == "LOG" && m_currentLine.size() == 3) {
-            return true;
-        }
-        if(m_currentLine[0] == "DELETE" && m_currentLine.size() == 3) {
-            return true;
-        }
-        if(m_currentLine[0] == "UPDATE" && m_currentLine.size() == 4) {
-            return true;
-        }
+        if (m_currentLine[0] == "REG" && m_currentLine.size() == 3) return true;
+        if(m_currentLine[0] == "LOG" && m_currentLine.size() == 3) return true;
+        if(m_currentLine[0] == "DELETE" && m_currentLine.size() == 3) return true;
+        if(m_currentLine[0] == "UPDATE" && m_currentLine.size() == 4) return true;
+        if(m_currentLine[0] == "LOGOUT" && m_currentLine.size() == 3) return true;
     }
  
     return false;

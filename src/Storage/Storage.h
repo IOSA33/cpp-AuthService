@@ -8,10 +8,11 @@ class Storage{
 private:
     std::string m_sql{};
     pqxx::connection m_C{};
-    Client m_client{ 8080 };
+    Client m_client;
 
 public:
-    explicit Storage(const std::string& db_config) : m_C(db_config) {
+    Storage(const std::string& db_config, const int clientPort) 
+    : m_C(db_config), m_client(clientPort) {
         connect();
         init();
     }
@@ -28,5 +29,6 @@ public:
     bool createSessionID(const std::string& payload, int ttl);
     std::string getDataSessionID(const std::string& sessionID);
     bool revokeSessionID(const std::string& sessionID);
-    bool refreshSessionID(const std::string& sessionID);
+    bool revokeAllSessionID(const std::string& email);
+    bool refreshSessionID(const std::string& sessionID, int ttl);
 };
