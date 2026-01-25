@@ -4,7 +4,7 @@
 #include <cstring>
 #include "../Storage.h"
 
-bool Storage::createSessionID(const std::string& payload) {
+bool Storage::createSessionID(const std::string& payload, int ttl) {
     const size_t BIN_SIZE { 32 };
     unsigned char hashed_session[BIN_SIZE];
 
@@ -16,7 +16,7 @@ bool Storage::createSessionID(const std::string& payload) {
     sodium_bin2hex(hex.data(), hex.size(), hashed_session, BIN_SIZE);
 
     // This is sending tcp request for my own implementation of Redis
-    //m_client.sendData("SET " + std::string(hex.data()) + " " + payload);
+    m_client.sendData("SET " + std::string(hex.data()) + " " + payload + " " + std::to_string(ttl));
 
     return true;
 }

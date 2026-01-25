@@ -26,7 +26,7 @@ int main() {
     // Initializing Logger
     Logger log{ "LogForCMDs.txt" };
     // Initializing App
-    AuthService app{ &log };
+    AuthService app{ &log, &cfg };
     // Starting App
     app.run();
     

@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <print>
 #include "Logger/Logger.h"
+#include "src/Config/Config.h"
 
 // Commands
 // REG [email] [pass] : return sessionID
@@ -34,7 +35,7 @@ void AuthService::run() {
                 if (m_currentLine[0] == "REG") {
                     if (m_storage.addUser(m_currentLine[1], m_currentLine[2])) {
                         std::cout << "Congrats! User registered!\n";
-                        std::cout << m_storage.createSessionID(m_currentLine[1]) << '\n';
+                        std::cout << m_storage.createSessionID(m_currentLine[1], m_config->auth.access_ttl) << '\n';
                         writeLogCMD();
                         continue;
                     } else {
@@ -45,7 +46,7 @@ void AuthService::run() {
                 if (m_currentLine[0] == "LOG") {
                     if (m_storage.verifyUser(m_currentLine[1], m_currentLine[2])) {
                         std::cout << "Congrats! User logged in!\n";
-                        std::cout << m_storage.createSessionID(m_currentLine[1]) << '\n';
+                        std::cout << m_storage.createSessionID(m_currentLine[1], m_config->auth.access_ttl) << '\n';
                         writeLogCMD();
                         continue;
                     } else {
@@ -56,7 +57,7 @@ void AuthService::run() {
                 if (m_currentLine[0] == "UPDATE") {
                     if (m_storage.updateUserPass(m_currentLine[1], m_currentLine[2], m_currentLine[3])) {
                         std::cout << "Congrats! User UPDATED!\n";
-                        std::cout << m_storage.createSessionID(m_currentLine[1]) << '\n';
+                        std::cout << m_storage.createSessionID(m_currentLine[1], m_config->auth.access_ttl) << '\n';
                         writeLogCMD();
                         continue;
                     } else {
