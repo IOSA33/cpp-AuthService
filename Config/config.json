@@ -2,9 +2,9 @@
     "env": "local",
     "clientPort": 8080,
     "serverPort": 9090,
-    "auth": [{
-        "jwt-secret": "someSecret",
-        "access_ttl": "600",
-        "refresh_ttl": "1200"
-    }]
+    "auth": {
+        "jwt_secret": "someSecret",
+        "access_ttl": 600,
+        "refresh_ttl": 1200
+    }
 }

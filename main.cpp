@@ -1,11 +1,12 @@
 #include <iostream>
-#include "src/AuthService.h"
-#include "src/Logger/Logger.h"
 #include <sodium.h>
 #include <windows.h>
 #include <chrono>
 #include <print>
 #include <format>
+#include "src/AuthService.h"
+#include "src/Logger/Logger.h"
+#include "src/Config/Config.h"
 
 void printCurrectTime();
 
@@ -20,6 +21,8 @@ int main() {
 
     printCurrectTime();
 
+    // Initializing Config
+    ConfigSpace::Config cfg { ConfigSpace::MustLoad("../Config/config.json") };
     // Initializing Logger
     Logger log{ "LogForCMDs.txt" };
     // Initializing App
