@@ -111,6 +111,7 @@ bool Storage::checkEmail(const std::string& email) {
         pqxx::result R( N.exec(m_sql, pqxx::params{ email }));
         bool exists { R[0][0].as<bool>() };
         if (!exists) {
+            std::cout << "Email does not exists!" << '\n';
             return false;
         }
         std::cout << "Email exists!" << '\n';

@@ -26,7 +26,7 @@ public:
     bool deleteUser(const std::string& email, const std::string& pass);
     bool updateUserPass(const std::string& email, const std::string& oldPass, const std::string& newPass);
     
-    bool createSessionID(const std::string& payload, int ttl);
+    std::string createSessionID(const std::string& payload, int ttl);
     std::string getDataSessionID(const std::string& sessionID);
     bool revokeSessionID(const std::string& sessionID);
     bool revokeAllSessionID(const std::string& email);

@@ -19,7 +19,6 @@ private:
     std::vector<std::string> m_currentLine{};
     
 public:
-    // TODO: Constuctor with cfg reader
     AuthService(Logger* logger = nullptr, ConfigSpace::Config* cfg = nullptr ) 
         : m_logger(logger), m_config(cfg) {}
     ~AuthService() {}

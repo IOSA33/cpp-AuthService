@@ -61,7 +61,7 @@ void AuthService::run() {
                         // Firstly we revoke all old sessionid of the user
                         m_storage.revokeAllSessionID(m_currentLine[1]);
                         // Then we create new one
-                        m_storage.createSessionID(m_currentLine[1], m_config->auth.access_ttl);
+                        std::cout << m_storage.createSessionID(m_currentLine[1], m_config->auth.access_ttl) << '\n';
                         writeLogCMD();
                         continue;
                     } else {
@@ -83,10 +83,14 @@ void AuthService::run() {
 
                 if (m_currentLine[0] == "LOGOUT") {
                     if (m_storage.checkEmail(m_currentLine[1])) {
-                        std::cout << "Congrats! User lOGOUT!\n";
                         // Revoking sessionId
-                        m_storage.revokeSessionID(m_currentLine[2]);
-                        writeLogCMD();
+                        if (m_storage.revokeSessionID(m_currentLine[2])) {
+                            std::cout << "Congrats! User lOGOUT!\n";
+                            writeLogCMD();
+                        } else {
+                            std::cout << "Invalid sessionID!" << '\n';
+                        }
+                        
                         continue;
                     } else {
                         continue;
@@ -103,7 +107,7 @@ void AuthService::run() {
                     }
 
                     // After every success of getting data we refreshing current sessionId
-                    m_storage.refreshSessionID(m_currentLine[1], m_config->auth.refresh_ttl);
+                    // m_storage.refreshSessionID(m_currentLine[1], m_config->auth.refresh_ttl);
 
                     std::cout << "GET some result!" << '\n';
                     continue;
